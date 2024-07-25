@@ -2,10 +2,18 @@
 """
 Pascal's Triangle Project
 """
+
+
 def pascal_triangle(n):
-    '''
-    
-    '''
+    """
+    Pascal's Triangle Project
+
+    This module contains a function that generates Pascal's Triangle
+    up to a specified number of levels.
+
+    Functions:
+        pascal_triangle(n): Generates Pascal's Triangle up to n levels.
+    """
     if n <= 0:
         return []
 
