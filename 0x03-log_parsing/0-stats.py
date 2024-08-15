@@ -5,6 +5,7 @@ Log Parsing
 import sys
 import re
 
+# Initialize total file size and a dictionary to count status codes
 total_file_size = 0
 status_code_count = {
     str(code): 0 for code in [
@@ -17,33 +18,33 @@ status_code_count = {
         405,
         500]}
 
+# Compile a regular expression to match the log format
+log_pattern = re.compile(
+    r'\S+ - \[\S+ \S+\] "GET /projects/260 HTTP/1.1" (\d{3}) (\d+)')
 
 line_count = 0
 try:
     for line in sys.stdin:
-        line_count += 1
+        # Use regex to find matches
+        match = log_pattern.search(line)
+        if match:
+            status_code, file_size = match.groups()
+            total_file_size += int(file_size)
+            if status_code in status_code_count:
+                status_code_count[status_code] += 1
+            line_count += 1
 
-        parts = line.split()
-        if len(parts) < 7:
-            continue
-
-        status_code = parts[7]
-        file_size = int(parts[8])
-
-        total_file_size += int(file_size)
-
-        if status_code in status_code_count.keys():
-            status_code_count[status_code] += 1
-
-        if line_count % 10 == 0:
+        # After every 10 lines or at a keyboard interruption, print statistics
+        if line_count % 10 == 0 or KeyboardInterrupt:
             print("File size: {}".format(total_file_size))
-            for code in sorted(status_code_count.keys()):
+            for code in sorted(status_code_count.keys(), key=int):
                 if status_code_count[code] > 0:
                     print("{}: {}".format(code, status_code_count[code]))
 
 except KeyboardInterrupt:
+    # Print statistics upon keyboard interruption
     print("File size: {}".format(total_file_size))
-    for code in sorted(status_code_count.keys()):
+    for code in sorted(status_code_count.keys(), key=int):
         if status_code_count[code] > 0:
             print("{}: {}".format(code, status_code_count[code]))
     sys.exit(0)
