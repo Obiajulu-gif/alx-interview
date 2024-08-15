@@ -6,21 +6,14 @@ import sys
 import re
 
 total_file_size = 0
-status_code_count = {
-    "200": 0,
-    "301": 0,
-    "400": 0,
-    "401": 0,
-    "403": 0,
-    "404": 0,
-    "405": 0,
-    "500": 0
-}
-pattern = re.compile(r'\S+ - \[\S+ \S+\] "\S+ \S+ \S+" (\d{3}) (\d+)')
+status_code_count = {str(code): 0 for code in [200, 301, 400, 401, 403, 404, 405, 500]}
+pattern = re.compile(
+    r'\S+ - \[\S+ \S+\] "GET /projects/260 HTTP/1.1" (\d{3}) (\d+)')
 
 line_count = 0
 try:
-    while (line := sys.stdin.readline().strip()):
+    for line in sys.stdin:
+        line = line.strip()
         match = pattern.search(line)
         if match:
             status_code, file_size = match.groups()
@@ -38,7 +31,7 @@ try:
             status_code_count = {code: 0 for code in status_code_count}
 except KeyboardInterrupt:
     print("File size: {}".format(line_count))
-    for code in sorted(status_code_count.keys()):
+    for code in sorted(status_code_count.keys(), key=int):
         if status_code_count[code] > 0:
             print("{}: {}".format(code, status_code_count[code]))
     sys.exit()
