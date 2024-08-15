@@ -4,10 +4,11 @@ Log Parsing
 """
 import sys
 import re
+from typing import Dict, Pattern, Tuple
 
 # Initialize total file size and a dictionary to count status codes
-total_file_size = 0
-status_code_count = {
+total_file_size: int = 0
+status_code_count: Dict[str, int] = {
     str(code): 0 for code in [
         200,
         301,
@@ -19,14 +20,14 @@ status_code_count = {
         500]}
 
 # Compile a regular expression to match the log format
-log_pattern = re.compile(
+log_pattern: Pattern = re.compile(
     r'\S+ - \[\S+ \S+\] "GET /projects/260 HTTP/1.1" (\d{3}) (\d+)')
 
-line_count = 0
+line_count: int = 0
 try:
     for line in sys.stdin:
         # Use regex to find matches
-        match = log_pattern.search(line)
+        match: re.Match = log_pattern.search(line)
         if match:
             status_code, file_size = match.groups()
             total_file_size += int(file_size)
