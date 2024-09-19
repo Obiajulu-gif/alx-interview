@@ -1,27 +1,23 @@
-from collections import deque
+#!/usr/bin/python3
+"""Change comes from within"""
 
 
 def makeChange(coins, total):
     """
-    Determine the fewest number of coins needed to meet a given amount total.
+    Determine the fewest number of coin needed to meet a given amount total
     """
     if total <= 0:
         return 0
 
-    queue = deque([(0, 0)])  # (current amount, number of coins used)
-    visited = set([0])
+    dp = [float('inf')] * (total + 1)
+    dp[0] = 0
 
-    while queue:
-        current_amount, num_coins = queue.popleft()
+    for coin in coins:
+        for amount in range(coin, total + 1):
+            if dp[amount - coin] != float('inf'):
+                dp[amount] = min(dp[amount], dp[amount - coin] + 1)
 
-        for coin in coins:
-            new_amount = current_amount + coin
+    if dp[total] == float('inf'):
+        return -1
 
-            if new_amount == total:
-                return num_coins + 1
-
-            if new_amount < total and new_amount not in visited:
-                queue.append((new_amount, num_coins + 1))
-                visited.add(new_amount)
-
-    return -1
+    return dp[total]
