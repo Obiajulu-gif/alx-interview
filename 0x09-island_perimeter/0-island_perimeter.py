@@ -1,5 +1,14 @@
 #!/usr/bin/python3
+"""Island perimeter problem"""
+
+
 def island_perimeter(grid):
+    """"this is a function that calculate the perimeter of a gird
+
+    Keyword arguments:
+    argument -- grid
+    Return: the perimeter of the grid
+    """
     perimeter = 0
     rows = len(grid)
     cols = len(grid[0])
